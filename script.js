@@ -1,12 +1,10 @@
-document.addEventListener("DOMContentLoaded", () =>
-{
+document.addEventListener("DOMContentLoaded", () => {
     let otherUserID;
 
     const HOST = location.origin.replace(/^http/, 'ws')
     const ws = new WebSocket(HOST)
 
-    ws.onopen = () =>
-    {
+    ws.onopen = () => {
         console.log("-*- WebSocket is connected -*-")
         ws.send(JSON.stringify(["userID", USER_ID]))
     }
@@ -21,14 +19,14 @@ document.addEventListener("DOMContentLoaded", () =>
     let mySymbol = null;
 
     const winingCombinations = [
-        [1,4,7],
-        [2,5,8],
-        [3,6,9],
-        [1,2,3],
-        [4,5,6],
-        [7,8,9],
-        [1,5,9],
-        [3,5,7],
+        [1, 4, 7],
+        [2, 5, 8],
+        [3, 6, 9],
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+        [1, 5, 9],
+        [3, 5, 7],
     ]
 
 
@@ -38,16 +36,15 @@ document.addEventListener("DOMContentLoaded", () =>
 
     const canvas = document.querySelector('.backgroundAnimation')
 
-    function init()
-    {
+    function init() {
         scene = new THREE.Scene();
-        camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000)
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
         renderer = new THREE.WebGLRenderer({antialias: true, alpha: true, canvas: canvas});
 
         renderer.setSize(window.innerWidth, window.innerHeight)
 
 
-        const geometry = new THREE.DodecahedronGeometry(5,2);
+        const geometry = new THREE.DodecahedronGeometry(5, 2);
         // const material = new THREE.MeshPhongMaterial({wireframe: true, emissive: 0x000000})
         const material = new THREE.PointsMaterial({
             size: 0.03
@@ -59,8 +56,7 @@ document.addEventListener("DOMContentLoaded", () =>
 
     }
 
-    function animate()
-    {
+    function animate() {
         requestAnimationFrame(animate)
 
         cube.rotation.y += 0.001;
@@ -69,9 +65,8 @@ document.addEventListener("DOMContentLoaded", () =>
         renderer.render(scene, camera)
     }
 
-    function onReSize()
-    {
-        camera.aspect = window.innerWidth/window.innerHeight
+    function onReSize() {
+        camera.aspect = window.innerWidth / window.innerHeight
         camera.updateProjectionMatrix()
         renderer.setSize(window.innerWidth, window.innerHeight)
     }
@@ -81,16 +76,12 @@ document.addEventListener("DOMContentLoaded", () =>
     animate()
 
 
-
-
-
     //Create the room
     const createRoomButton = document.querySelector(".createRoomButton")
 
     createRoomButton.addEventListener("click", createRoom)
 
-    function createRoom()
-    {
+    function createRoom() {
         console.log("-*- The request to create room has been sent -*-")
         mainMenuBackButton.removeEventListener('click', closeMenu)
         mainMenuBackButton.style.opacity = "0"
@@ -104,20 +95,15 @@ document.addEventListener("DOMContentLoaded", () =>
     const joinRoomStatusMessage = document.querySelector(".joinRoomStatusMessage")
 
     joinRoomButton.addEventListener("click", joinRoom)
-    joinRoomInputBox.addEventListener("keydown", (e) =>
-    {
-        if(e.code === "Enter") joinRoom()
+    joinRoomInputBox.addEventListener("keydown", (e) => {
+        if (e.code === "Enter") joinRoom()
     })
 
-    function joinRoom()
-    {
+    function joinRoom() {
         const enteredCode = joinRoomInputBox.value;
-        if(enteredCode.length === 6)
-        {
+        if (enteredCode.length === 6) {
             ws.send(JSON.stringify(["join", enteredCode]))
-        }
-        else
-        {
+        } else {
             joinRoomInputBox.value = ""
             joinRoomInputBox.focus()
             joinRoomStatusMessage.innerText = "Room Code should be of 6 characters"
@@ -132,8 +118,7 @@ document.addEventListener("DOMContentLoaded", () =>
     const roomCodeDisplayMessage = document.querySelector(".roomCodeDisplayMessage")
     const joinRoomBackLinkButton = document.querySelector(".joinRoomBackLinkButton")
 
-    function roomCodeReceived(roomCode)
-    {
+    function roomCodeReceived(roomCode) {
 
         joinRoomInputBox.style.border = "none"
         mainMenuWindow.style.clipPath = "inset(0 100% 0 0)"
@@ -142,21 +127,15 @@ document.addEventListener("DOMContentLoaded", () =>
         joinRoomBackLinkButton.addEventListener("click", joinRoomInstead)
 
 
-        try
-        {
-            document.querySelector(".roomCodeCopyButton").addEventListener('click', () =>
-            {
-                navigator.clipboard.writeText(roomCode).then(s =>
-                {
+        try {
+            document.querySelector(".roomCodeCopyButton").addEventListener('click', () => {
+                navigator.clipboard.writeText(roomCode).then(s => {
                     roomCodeDisplayMessage.innerText = "Copied!"
-                }).catch(e =>
-                {
+                }).catch(e => {
                     roomCodeDisplayMessage.innerText = "Unable to Copy!"
                 })
             })
-        }
-        catch (e)
-        {
+        } catch (e) {
             roomCodeDisplayMessage.innerText = "Unable to Copy!"
         }
 
@@ -165,8 +144,7 @@ document.addEventListener("DOMContentLoaded", () =>
 
     //Join room instead
 
-    function joinRoomInstead()
-    {
+    function joinRoomInstead() {
         console.log("-*- Join room instead -*-")
 
         ws.send(JSON.stringify(['joinInstead']))
@@ -177,12 +155,11 @@ document.addEventListener("DOMContentLoaded", () =>
 
     //join room message display
 
-    function joinRoomMessageDisplayFunction(message)
-    {
+    function joinRoomMessageDisplayFunction(message) {
         joinRoomInputBox.style.border = "yellow 1px solid"
         joinRoomStatusMessage.innerText = message
 
-        setTimeout(()=> joinRoomStatusMessage.innerText="", 5000)
+        setTimeout(() => joinRoomStatusMessage.innerText = "", 5000)
     }
 
     //Room Joined
@@ -193,44 +170,36 @@ document.addEventListener("DOMContentLoaded", () =>
     const drawScoreDisplay = document.querySelector('#drawScoreDisplay')
 
 
-    function roomJoined()
-    {
+    function roomJoined() {
         mainMenuWindow.style.clipPath = "inset(0 100% 0 0)"
         codeWindow.style.clipPath = "inset(0 100% 0 0)"
         gameWindow.style.clipPath = "inset(0 0 0 0)"
     }
 
     //Make a turn
-    function makeATurn()
-    {
-        if(isMyTurn)
-        {
+    function makeATurn() {
+        if (isMyTurn) {
             const num = this.getAttribute("data-id")
             ws.send(JSON.stringify(["place", mySymbol, num]))
         }
     }
 
     //Place Symbol
-    let occupiedPositions = [0,0,0,0,0,0,0,0,0]
-    function placeSymbol(symbol, place)
-    {
-        placeHolders.forEach((e, index) =>
-        {
+    let occupiedPositions = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    function placeSymbol(symbol, place) {
+        placeHolders.forEach((e, index) => {
             const num = e.getAttribute("data-id")
-            if(num === place)
-            {
-                e.innerHTML = (symbol === "x")? "<svg fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"18\" x2=\"6\" y1=\"6\" y2=\"18\"/><line x1=\"6\" x2=\"18\" y1=\"6\" y2=\"18\"/></svg>" : "<svg fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg>"
-                occupiedPositions[index] = (symbol === "x")?1:2
+            if (num === place) {
+                e.innerHTML = (symbol === "x") ? "<svg fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><line x1=\"18\" x2=\"6\" y1=\"6\" y2=\"18\"/><line x1=\"6\" x2=\"18\" y1=\"6\" y2=\"18\"/></svg>" : "<svg fill=\"none\" stroke=\"#000\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg>"
+                occupiedPositions[index] = (symbol === "x") ? 1 : 2
             }
         })
 
-        if(symbol === "x")
-        {
+        if (symbol === "x") {
             document.querySelector('.xSymbolDisplay').classList.remove("playerSymbol");
             document.querySelector('.oSymbolDisplay').classList.add("playerSymbol")
-        }
-        else
-        {
+        } else {
             document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
             document.querySelector('.oSymbolDisplay').classList.remove("playerSymbol");
         }
@@ -241,32 +210,26 @@ document.addEventListener("DOMContentLoaded", () =>
 
     //Check for win
 
-    function checkForWin()
-    {
+    function checkForWin() {
 
-        winingCombinations.forEach(e =>
-        {
-            const a = e[0]-1
-            const b = e[1]-1
-            const c = e[2]-1
-            if(occupiedPositions[a] === 1 && occupiedPositions[b] === 1 && occupiedPositions[c] === 1)
-            {
+        winingCombinations.forEach(e => {
+            const a = e[0] - 1
+            const b = e[1] - 1
+            const c = e[2] - 1
+            if (occupiedPositions[a] === 1 && occupiedPositions[b] === 1 && occupiedPositions[c] === 1) {
                 console.log("-*- Player with X symbol has won -*-")
                 xScore += 1;
                 xScoreDisplay.innerText = `${xScore}`
                 winDisplay("x")
 
-            }
-            else if(occupiedPositions[a] === 2 && occupiedPositions[b] === 2 && occupiedPositions[c] === 2)
-            {
+            } else if (occupiedPositions[a] === 2 && occupiedPositions[b] === 2 && occupiedPositions[c] === 2) {
                 console.log("-*- Player with O symbol has won -*-")
                 oScore += 1;
                 oScoreDisplay.innerText = `${oScore}`
                 winDisplay("o")
             }
         })
-        if(occupiedPositions.indexOf(0) === -1)
-        {
+        if (occupiedPositions.indexOf(0) === -1) {
             console.log("-*- It is a draw -*-")
             drawScore += 1;
             drawScoreDisplay.innerText = `${drawScore}`
@@ -278,26 +241,19 @@ document.addEventListener("DOMContentLoaded", () =>
 
     const gameBoardDisplay = document.querySelector(".gameBoardDisplay")
 
-    function winDisplay(symbol)
-    {
-        placeHolders.forEach(e =>
-        {
+    function winDisplay(symbol) {
+        placeHolders.forEach(e => {
             e.innerHTML = ""
         })
 
         gameBoardDisplay.innerHTML = ""
         gameBoardDisplay.style.backgroundColor = "linear-gradient(to right top, #65dfc9, #6cdbeb)"
 
-        if(symbol === "d")
-        {
+        if (symbol === "d") {
             gameBoardDisplay.innerHTML = "<div class='gameBoardMessage'>Draw</div>"
-        }
-        else if(symbol === mySymbol)
-        {
+        } else if (symbol === mySymbol) {
             gameBoardDisplay.innerHTML = "<div class='gameBoardMessage'>You won</div>"
-        }
-        else
-        {
+        } else {
             gameBoardDisplay.innerHTML = "<div class='gameBoardMessage'>You lost</div>"
         }
         document.querySelector(".gameBoardMessage").addEventListener("click", () => ws.send(JSON.stringify(["restart"])))
@@ -305,38 +261,33 @@ document.addEventListener("DOMContentLoaded", () =>
 
     //Restart game
 
-    function restartGame()
-    {
+    function restartGame() {
         gameBoardDisplay.innerHTML = ""
-        placeHolders.forEach(e =>
-        {
+        placeHolders.forEach(e => {
             gameBoardDisplay.appendChild(e)
             e.addEventListener('click', makeATurn)
         })
 
-        occupiedPositions = [0,0,0,0,0,0,0,0,0]
+        occupiedPositions = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         document.querySelector('.xSymbolDisplay').classList.remove("playerSymbol")
         document.querySelector('.oSymbolDisplay').classList.remove("playerSymbol")
 
-        if(isMyTurn)
-            if(mySymbol === "x")
+        if (isMyTurn)
+            if (mySymbol === "x")
                 document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
             else
                 document.querySelector('.oSymbolDisplay').classList.add("playerSymbol")
+        else if (mySymbol === "o")
+            document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
         else
-            if(mySymbol === "o")
-                document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
-            else
-                document.querySelector('.oSymbolDisplay').classList.add("playerSymbol")
+            document.querySelector('.oSymbolDisplay').classList.add("playerSymbol")
     }
-
 
 
     //Start game
 
     const placeHolders = document.querySelectorAll(".gamePlaceHolders")
-    placeHolders.forEach(e =>
-    {
+    placeHolders.forEach(e => {
         e.addEventListener('click', makeATurn)
     })
 
@@ -346,18 +297,14 @@ document.addEventListener("DOMContentLoaded", () =>
     menuNavButton.addEventListener("click", openMenu)
     chatNavButton.addEventListener("click", openChatWindow)
 
-    function startGame(isTurn)
-    {
-        if(isTurn)
-        {
+    function startGame(isTurn) {
+        if (isTurn) {
             document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
             document.querySelector('#xIcon').style.stroke = "#92d293"
 
             isMyTurn = true
             mySymbol = "x"
-        }
-        else
-        {
+        } else {
             document.querySelector('.xSymbolDisplay').classList.add("playerSymbol")
             document.querySelector('#oIcon').style.stroke = "#92d293"
             mySymbol = "o"
@@ -368,16 +315,14 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
     //open menu
-    function openMenu()
-    {
+    function openMenu() {
         mainMenuWindow.style.clipPath = "inset(0 0 0 0)"
         codeWindow.style.clipPath = "inset(0 0 0 100%)"
         gameWindow.style.clipPath = "inset(0 0 0 100%)"
     }
 
     //close menu
-    function closeMenu()
-    {
+    function closeMenu() {
         mainMenuWindow.style.clipPath = "inset(0 100% 0 0)"
         codeWindow.style.clipPath = "inset(0 100% 0 0)"
         gameWindow.style.clipPath = "inset(0 0 0 0)"
@@ -385,8 +330,8 @@ document.addEventListener("DOMContentLoaded", () =>
 
     //open chat
     const chatWindow = document.querySelector(".chatWindow")
-    function openChatWindow()
-    {
+
+    function openChatWindow() {
         gameWindow.style.clipPath = "inset(0 100% 0 0)"
         chatWindow.style.clipPath = "inset(0 0 0 0)"
     }
@@ -402,23 +347,19 @@ document.addEventListener("DOMContentLoaded", () =>
 
     sendChatButton.addEventListener("click", sendChat)
     chatBackButton.addEventListener("click", closeChatWindow)
-    textBox.addEventListener("keydown", (e) =>
-    {
-        if(e.code === "Enter") sendChat()
+    textBox.addEventListener("keydown", (e) => {
+        if (e.code === "Enter") sendChat()
     })
 
-    function closeChatWindow()
-    {
+    function closeChatWindow() {
         chatWindow.style.clipPath = "inset(0 0 0 100%)"
         gameWindow.style.clipPath = "inset(0 0 0 0)"
     }
 
-    function sendChat()
-    {
+    function sendChat() {
         const enteredMessage = textBox.value
 
-        if(enteredMessage.length > 0)
-        {
+        if (enteredMessage.length > 0) {
             textBox.value = ""
             printChat(USER_ID, enteredMessage)
             fetch("/chat", {
@@ -426,21 +367,22 @@ document.addEventListener("DOMContentLoaded", () =>
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 },
-                body: JSON.stringify({code: "CHAT", myuserid: USER_ID, otheruserid: otherUserID, message: enteredMessage})
+                body: JSON.stringify({
+                    code: "CHAT",
+                    myuserid: USER_ID,
+                    otheruserid: otherUserID,
+                    message: enteredMessage
+                })
             })
                 .then(res => {
-                    if(res.status >= 200 && res.status < 300) return res.json()
+                    if (res.status >= 200 && res.status < 300) return res.json()
                     else throw new Error("Problem with request" + res.statusText)
                 })
-                .then(data =>
-                {
+                .then(data => {
                     const status = data.code
-                    if(status === "SUCCESS")
-                    {
+                    if (status === "SUCCESS") {
                         console.log("-*- The message has been sent -*-")
-                    }
-                    else
-                    {
+                    } else {
                         console.log("-*- The message sending failed -*-")
                     }
                 })
@@ -449,10 +391,10 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
     let eventCount = 0;
-    function event()
-    {
-        eventCount+=1
-        console.log("-*- Send a request for Event number: "+eventCount+"-*-")
+
+    function event() {
+        eventCount += 1
+        console.log("-*- Send a request for Event number: " + eventCount + "-*-")
         fetch("/event", {
             method: "POST",
             headers: {
@@ -461,42 +403,34 @@ document.addEventListener("DOMContentLoaded", () =>
             body: JSON.stringify({code: "EVENT", userid: USER_ID})
         })
             .then(res => {
-                if(res.status >= 200 && res.status < 300) return res.json()
+                if (res.status >= 200 && res.status < 300) return res.json()
                 else throw new Error("Problem with request" + res.statusText)
             })
-            .then(data =>
-            {
+            .then(data => {
                 const status = data.code
                 const id = data.userid
                 const message = data.message
 
-                if(status === "CHAT")
-                {
+                if (status === "CHAT") {
                     printChat(id, message)
                 }
-                console.log("-*- The answer to the event number: "+eventCount+" has been answered -*-")
+                console.log("-*- The answer to the event number: " + eventCount + " has been answered -*-")
                 event()
             })
             .catch(err => console.log(err))
     }
 
-    function printChat(userID, message)
-    {
+    function printChat(userID, message) {
         const div = document.createElement("div")
         div.innerText = message
-        if(userID === USER_ID)
-        {
+        if (userID === USER_ID) {
             div.classList.add("sentMessages")
-        }
-        else
-        {
+        } else {
             div.classList.add("receivedMessages")
         }
         chatWrapper.appendChild(div)
         chatContainer.scrollTop = chatContainer.scrollHeight
     }
-
-
 
 
     //Calling WebRTC functionality
@@ -505,19 +439,28 @@ document.addEventListener("DOMContentLoaded", () =>
     const audioButtonOne = document.querySelector('.audioButtonOne')
     const audioButtonTwo = document.querySelector(".audioButtonTwo")
 
+    const videoDisplay = document.querySelector(".videoDisplay")
+    const myVideoDisplay = document.querySelector(".myVideoDisplay")
+    const otherVideoDisplay = document.querySelector(".otherVideoDisplay")
+    const endCallButton = document.querySelector('.callEndButton')
 
 
-    const configuration = {iceServers:
+    const configuration = {
+        iceServers:
             [{
-                urls:[
+                urls: [
                     "stun:stun.l.google.com:19302",
                     "stun:stun1.l.google.com:19302"
                 ]
-            }]}
+            }]
+    }
 
     const audioConfiguration = {
         audio: true,
-        video: false
+        video: {
+            width: { min: 1024, ideal: 1280, max: 1920 },
+            height: { min: 576, ideal: 720, max: 1080 }
+        }
     }
 
     let iceCandidates = []
@@ -530,8 +473,7 @@ document.addEventListener("DOMContentLoaded", () =>
     audioButtonOne.addEventListener("click", makeTheCall)
 
 
-    function makeTheCall()
-    {
+    function makeTheCall() {
         audioMessage.innerText = "Calling..."
         audioButtonOne.removeEventListener("click", makeTheCall)
 
@@ -539,13 +481,11 @@ document.addEventListener("DOMContentLoaded", () =>
 
         peerConnection = new RTCPeerConnection(configuration)
 
-        peerConnection.ontrack = e =>
-        {
-            const audio = new Audio()
-            audio.srcObject = e.streams[0]
-            audio.play()
+        peerConnection.ontrack = e => {
+            otherVideoDisplay.autoplay = true
+            otherVideoDisplay.srcObject = e.streams[0]
 
-            console.log("-*- Audio is connected -*-")
+            console.log("-*- Video is connected -*-")
 
             audioMessage.innerText = "Connected"
 
@@ -555,30 +495,35 @@ document.addEventListener("DOMContentLoaded", () =>
         }
 
         const dataChannel = peerConnection.createDataChannel("channel")
-        dataChannel.onopen = e => console.log("-*- Data channel is open -*-")
+        dataChannel.onopen = e => {
+            console.log("-*- Data channel is open -*-")
 
-        peerConnection.onicecandidate = e =>
-        {
-            if(e.candidate)
-            {
+            gameWindow.style.clipPath = "inset(0 0 100% 0)"
+            videoDisplay.style.clipPath = "inset(0 0 0 0)"
+
+            endCallButton.addEventListener('click', sendDisconnectMessage)
+        }
+
+        peerConnection.onicecandidate = e => {
+            if (e.candidate) {
                 console.log("-*- one ICE Candidate is sent -*-")
                 ws.send(JSON.stringify(["iceCandidates", USER_ID, {ice: e.candidate}]))
             }
         }
 
-        navigator.mediaDevices.getUserMedia(audioConfiguration).then(stream =>
-        {
+        navigator.mediaDevices.getUserMedia(audioConfiguration).then(stream => {
             streamMedia = stream
-            stream.getTracks().forEach(track =>
-            {
+            myVideoDisplay.autoplay = true
+            myVideoDisplay.srcObject = stream
+
+            stream.getTracks().forEach(track => {
                 console.log("-*- Audio is added to the stream -*-")
                 peerConnection.addTrack(track, stream)
             })
 
             console.log("-*- The request for call is being sent to the other user -*-")
             ws.send(JSON.stringify(["calling", USER_ID]))
-        }).catch(e =>
-        {
+        }).catch(e => {
             audioButtonOne.style.opacity = "0"
             audioMessage.innerText = "Permission Denied"
             console.log("-*- The permission of audio is denied so call can't be made now -*-")
@@ -587,12 +532,9 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
 
-    function makeTheOffer()
-    {
-        peerConnection.createOffer().then(o =>
-        {
-            peerConnection.setLocalDescription(o).then(e =>
-            {
+    function makeTheOffer() {
+        peerConnection.createOffer().then(o => {
+            peerConnection.setLocalDescription(o).then(e => {
                 console.log("-*- Local description of peer connection is set -*-")
                 setTimeout(() => {
                     console.log("-*- Offer is sent to the other user -*-")
@@ -602,15 +544,13 @@ document.addEventListener("DOMContentLoaded", () =>
         }).catch(e => console.log(e))
     }
 
-    function acceptTheAnswer(answer)
-    {
+    function acceptTheAnswer(answer) {
         peerConnection.setRemoteDescription(answer).then(e => console.log("-*- Remote description of peer connection is set -*-"))
         addIceCandidates()
     }
 
 
-    function receivingCall()
-    {
+    function receivingCall() {
         console.log("-*- There is an incoming call -*-")
         audioMessage.innerText = "Incoming"
         audioButtonOne.removeEventListener('click', makeTheCall)
@@ -619,21 +559,18 @@ document.addEventListener("DOMContentLoaded", () =>
         audioButtonTwo.addEventListener('click', rejectTheCall)
     }
 
-    function acceptTheCall()
-    {
+    function acceptTheCall() {
         console.log("-*- The call has been accepted -*-")
         peerConnection = new RTCPeerConnection(configuration)
 
         audioButtonOne.removeEventListener('click', acceptTheCall)
         audioButtonTwo.removeEventListener('click', rejectTheCall)
 
-        peerConnection.ontrack = e =>
-        {
-            const audio = new Audio()
-            audio.srcObject = e.streams[0]
-            audio.play()
+        peerConnection.ontrack = e => {
+            otherVideoDisplay.autoplay = true
+            otherVideoDisplay.srcObject = e.streams[0]
 
-            console.log("-*- Audio has been connected -*-")
+            console.log("-*- Video has been connected -*-")
 
             audioMessage.innerText = "Connected"
 
@@ -642,34 +579,37 @@ document.addEventListener("DOMContentLoaded", () =>
             audioButtonTwo.addEventListener('click', sendDisconnectMessage)
         }
 
-        peerConnection.ondatachannel = e =>
-        {
+        peerConnection.ondatachannel = e => {
             const dataChannel = e.channel
-            dataChannel.onopen = e => console.log("-*- The data channel is opened -*-")
+            dataChannel.onopen = e => {
+                console.log("-*- The data channel is opened -*-")
+                gameWindow.style.clipPath = "inset(0 0 100% 0)"
+                videoDisplay.style.clipPath = "inset(0 0 0 0)"
+
+                endCallButton.addEventListener('click', sendDisconnectMessage)
+            }
         }
 
-        peerConnection.onicecandidate = e =>
-        {
-            if(e.candidate)
-            {
+        peerConnection.onicecandidate = e => {
+            if (e.candidate) {
                 console.log("-*- one ICE candidate is sent -*-")
                 ws.send(JSON.stringify(["iceCandidates", USER_ID, {ice: e.candidate}]))
             }
         }
 
-        navigator.mediaDevices.getUserMedia(audioConfiguration).then(stream =>
-        {
+        navigator.mediaDevices.getUserMedia(audioConfiguration).then(stream => {
             streamMedia = stream
-            stream.getTracks().forEach(track =>
-            {
+            myVideoDisplay.autoplay = true
+            myVideoDisplay.srcObject = stream
+
+            stream.getTracks().forEach(track => {
                 console.log("-*- Audio is added to the stream -*-")
                 peerConnection.addTrack(track, stream)
             })
 
             console.log("-*- The request of accepted call has been sent -*-")
             ws.send(JSON.stringify(["accepted", USER_ID]))
-        }).catch(e =>
-        {
+        }).catch(e => {
             audioButtonOne.style.opacity = "0"
             audioMessage.innerText = "Permission Denied"
             console.log("-*- Audio permission has been denied so call can't be made now -*-")
@@ -678,15 +618,12 @@ document.addEventListener("DOMContentLoaded", () =>
         })
     }
 
-    function acceptTheOffer(offer)
-    {
-        peerConnection.setRemoteDescription(offer).then(e =>
-        {
+    function acceptTheOffer(offer) {
+        peerConnection.setRemoteDescription(offer).then(e => {
             console.log("-*- Remote description has been set for the peer connection -*-")
             addIceCandidates()
 
-            peerConnection.createAnswer().then(a =>
-            {
+            peerConnection.createAnswer().then(a => {
                 peerConnection.setLocalDescription(a).then(e => console.log("-*- Local description has been set for the peer connection -*-"))
             }).catch(e => console.log(e))
 
@@ -699,18 +636,15 @@ document.addEventListener("DOMContentLoaded", () =>
         })
     }
 
-    function addIceCandidates()
-    {
+    function addIceCandidates() {
         console.log("-*- ICE candidate is added -*-")
-        iceCandidates.forEach(e =>
-        {
+        iceCandidates.forEach(e => {
             const candidate = e.ice
             peerConnection.addIceCandidate(candidate).then(e => console.log("ice candidate set")).catch(e => console.log(e))
         })
     }
 
-    function rejectTheCall()
-    {
+    function rejectTheCall() {
         console.log("-*- Call has been rejected -*-")
 
         audioMessage.innerText = "rejected"
@@ -721,32 +655,37 @@ document.addEventListener("DOMContentLoaded", () =>
         console.log("-*- Message of call has been rejected is sent -*-")
         ws.send(JSON.stringify(["rejected", USER_ID]))
 
-        setTimeout(() =>
-        {
+        setTimeout(() => {
             audioMessage.innerText = "connect audio"
             audioButtonOne.addEventListener("click", makeTheCall)
         }, 2000)
     }
 
 
-    function sendDisconnectMessage()
-    {
+    function sendDisconnectMessage() {
         console.log("-*- Request for disconnecting the audio has been sent -*-")
         ws.send(JSON.stringify(["disconnect"]))
         audioButtonTwo.removeEventListener('click', sendDisconnectMessage)
     }
 
-    function disconnect()
-    {
+    function disconnect() {
 
         audioMessage.innerText = "disconnecting..."
+
+        myVideoDisplay.srcObject = null
+        otherVideoDisplay.srcObject = null
+
+        gameWindow.style.clipPath = "inset(0 0 0 0)"
+        videoDisplay.style.clipPath = "inset(100% 0 0 0)"
+
+
+        endCallButton.removeEventListener('click', sendDisconnectMessage)
 
         console.log("-*- Closing the peer connection -*-")
         peerConnection.close()
 
         console.log("-*- Disconnecting the audio -*-")
-        streamMedia.getTracks().forEach(e =>
-        {
+        streamMedia.getTracks().forEach(e => {
             e.stop()
         })
 
@@ -756,8 +695,7 @@ document.addEventListener("DOMContentLoaded", () =>
         audioMessage.innerText = "disconnected"
 
 
-        setTimeout(() =>
-        {
+        setTimeout(() => {
             audioButtonOne.style.opacity = "1"
             audioButtonOne.addEventListener("click", makeTheCall)
             peerConnection = null;
@@ -766,123 +704,72 @@ document.addEventListener("DOMContentLoaded", () =>
     }
 
 
-
-
-
-
-    ws.onmessage = (ev =>
-    {
+    ws.onmessage = (ev => {
 
         let message = JSON.parse(ev.data)
 
         const messageType = message[0]
 
-        if(messageType === "roomCode")
-        {
+        if (messageType === "roomCode") {
             console.log("-*- The room code has is received  -*-")
             roomCodeReceived(message[1])
-        }
-
-        else if(messageType === "joinRoomMessage")
-        {
+        } else if (messageType === "joinRoomMessage") {
             console.log("-*- There is a message regarding join the room -*-")
             joinRoomMessageDisplayFunction(message[1])
-        }
-
-        else if(messageType === "joined")
-        {
+        } else if (messageType === "joined") {
             console.log("-*- Room is joined -*-")
 
             roomJoined()
-            if(message[1] !== USER_ID) otherUserID = message[1]
-            console.log("-*- My USER_ID: "+ USER_ID+" -*-")
-            console.log("-*- Other USER_ID: "+ otherUserID+" -*-")
+            if (message[1] !== USER_ID) otherUserID = message[1]
+            console.log("-*- My USER_ID: " + USER_ID + " -*-")
+            console.log("-*- Other USER_ID: " + otherUserID + " -*-")
             event()
-        }
-
-        else if(messageType === "left")
-        {
+        } else if (messageType === "left") {
             console.log("-*- Other user has left the game -*-")
             joinRoomMessageDisplayFunction(message[1])
-        }
-
-        else if(messageType === 'turn')
-        {
+        } else if (messageType === 'turn') {
             startGame(message[1])
-        }
-
-        else if(messageType === "place")
-        {
+        } else if (messageType === "place") {
             console.log("-*- The symbol is placed -*-")
             placeSymbol(message[1], message[2])
-        }
-
-        else if(messageType === "restart")
-        {
+        } else if (messageType === "restart") {
             console.log("-*- The game is restarted -*-")
             restartGame()
-        }
-
-        else if(messageType === "disconnect")
-        {
+        } else if (messageType === "disconnect") {
             console.log("-*- Disconnect messages is received -*-")
             disconnect()
-        }
+        } else if (messageType === "iceCandidates") {
 
-        else if(messageType === "iceCandidates")
-        {
-
-            if(USER_ID !== message[1])
-            {
+            if (USER_ID !== message[1]) {
                 console.log("-*- ICE candidate is received -*-")
                 iceCandidates.push(message[2])
             }
-        }
+        } else if (messageType === "calling") {
 
-        else if(messageType === "calling")
-        {
-
-            if(USER_ID !== message[1])
-            {
+            if (USER_ID !== message[1]) {
                 console.log("-*- Calling request is received -*-")
                 receivingCall()
             }
-        }
+        } else if (messageType === 'accepted') {
 
-        else if(messageType === 'accepted')
-        {
-
-            if(USER_ID !== message[1])
-            {
+            if (USER_ID !== message[1]) {
                 console.log("-*- The call has been accepted -*-")
                 makeTheOffer()
             }
-        }
+        } else if (messageType === "offer") {
 
-        else if(messageType === "offer")
-        {
-
-            if(USER_ID !== message[1])
-            {
+            if (USER_ID !== message[1]) {
                 console.log("-*- The offer is received -*-")
                 acceptTheOffer(message[2])
             }
-        }
+        } else if (messageType === "answer") {
 
-        else if(messageType === "answer")
-        {
-
-            if(USER_ID !== message[1])
-            {
+            if (USER_ID !== message[1]) {
                 console.log("-*- The answer is received -*-")
                 acceptTheAnswer(message[2])
             }
-        }
-
-        else if(messageType === 'denied')
-        {
-            if(USER_ID !== message[1])
-            {
+        } else if (messageType === 'denied') {
+            if (USER_ID !== message[1]) {
                 console.log("-*- Other user has denied the permission to their audio -*-")
                 audioMessage.innerText = "permission denied"
                 audioButtonOne.style.opacity = "0"
