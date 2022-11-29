@@ -1,4 +1,4 @@
-# Computer Networking - Project
+# Tic-Tac-Toe Chat
 **Chat+Talk Application**
 After cloning the repository, run the following command in the directory
 ```
@@ -10,8 +10,3 @@ To start the server, run
 node app
 ```
 The application hosted on the **localhost:3000**
-
-The same application is hosted on Heroku also. The link is as follows
-```
-https://computer-networking-project.herokuapp.com/
-```
